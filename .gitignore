@@ -6,7 +6,7 @@ out/*
 .idea/*
 .gradle/*
 target/*
-build/*
+build/
 key/*
 local.properties
 DroidUPnP.iml

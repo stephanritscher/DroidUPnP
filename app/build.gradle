@@ -1,0 +1,85 @@
+apply plugin: 'com.android.application'
+
+repositories {
+    maven { url "file:/opt/android-studio/gradle/m2repository" }
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url 'http://4thline.org/m2'
+        allowInsecureProtocol true
+    }
+    google()
+}
+
+dependencies {
+    // Android support
+    implementation 'com.android.support:appcompat-v7:25.3.1'
+
+    // Cling
+    implementation group: 'org.fourthline.cling', name: 'cling-core', version:'2.1.1'
+    implementation group: 'org.fourthline.cling', name: 'cling-support', version:'2.1.1'
+    implementation group: 'org.eclipse.jetty', name: 'jetty-server', version:'8.1.18.v20150929'
+    implementation group: 'org.eclipse.jetty', name: 'jetty-servlet', version:'8.1.18.v20150929'
+    implementation group: 'org.eclipse.jetty', name: 'jetty-client', version:'8.1.18.v20150929'
+    implementation group: 'org.slf4j', name: 'slf4j-jdk14', version:'1.7.14'
+    implementation group: 'org.apache.tika', name: 'tika-core', version: '1.8'
+
+    implementation('de.psdev.licensesdialog:licensesdialog:1.8.1') {
+        exclude module: 'support-v4'
+    }
+}
+
+android {
+    namespace "org.droidupnp"
+    compileSdkVersion 28
+//    buildToolsVersion '27.0.3'
+
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion 26
+    }
+
+    packagingOptions {
+        exclude 'META-INF/beans.xml'
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    signingConfigs { release }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            resources.srcDirs = ['src/main/res']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
+        }
+    }
+}
+
+File propFile = file('signing.properties');
+if (propFile.exists()) {
+    def Properties props = new Properties()
+    props.load(new FileInputStream(propFile))
+
+    if (props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
+            props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
+        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
+        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
+    } else {
+        android.buildTypes.release.signingConfig = null
+    }
+} else {
+        android.buildTypes.release.signingConfig = null
+}

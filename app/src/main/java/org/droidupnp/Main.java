@@ -174,20 +174,16 @@ public class Main extends AppCompatActivity
 		// as you specify a parent activity in AndroidManifest.xml.
 
 		// Handle item selection
-		switch (item.getItemId())
-		{
-			case R.id.menu_refresh:
-				refresh();
-				break;
-			case R.id.menu_settings:
-				startActivity(new Intent(this, SettingsActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
-				break;
-			case R.id.menu_quit:
-				finish();
-				break;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_refresh) {
+            refresh();
+        } else if (itemId == R.id.menu_settings) {
+            startActivity(new Intent(this, SettingsActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        } else if (itemId == R.id.menu_quit) {
+            finish();
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
 		return super.onOptionsItemSelected(item);
 	}
 
